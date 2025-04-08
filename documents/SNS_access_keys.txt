@@ -1,0 +1,5 @@
+accessKeyId: AKIA5R3N5UCS7AT6GKKW
+secretKey: 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
+region: us-east-1
+
+referance: https://sean-bradley.medium.com/create-an-sms-api-in-5-minutes-with-aws-sns-and-nodejs-c66f6cd4af07
