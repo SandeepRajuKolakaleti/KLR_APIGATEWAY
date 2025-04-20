@@ -71,4 +71,12 @@ export class ProductService {
         );
     }
 
+    async getImageUrlToBase64(payload: any) {
+        this.token = await this.redisCacheService.get("localtoken");
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/uploadImgToBase64', payload, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
 }

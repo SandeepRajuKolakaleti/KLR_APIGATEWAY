@@ -51,4 +51,11 @@ export class ProductsController {
     async delete(@Param('id') id: number): Promise<any> {
       return this.productService.deleteProduct(id);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('uploadImgToBase64')
+    async base64(@Body() img: any) {
+        console.log(img);
+        return this.productService.getImageUrlToBase64(img);
+    }
 }
