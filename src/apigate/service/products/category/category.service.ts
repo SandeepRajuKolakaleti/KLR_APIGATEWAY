@@ -22,9 +22,21 @@ export class CategoryService {
         return headersRequest;
     }
 
-    async create(createdCategoryDto: CreateCategoryDto): Promise<Observable<CategoryI>> {
+    async create(file: Express.Multer.File, createdCategoryDto: CreateCategoryDto): Promise<Observable<CategoryI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/categories/create-category', createdCategoryDto, { headers: this.getHeaders(this.token) })
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('ThumnailImage', createdCategoryDto.ThumnailImage);
+        formData.append('Name', createdCategoryDto.Name);
+        formData.append('Slug', createdCategoryDto.Slug);
+        formData.append('Status', createdCategoryDto.Status.toString());
+        formData.append('file', blob, file.originalname);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/categories/create-category', formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGFzc3dvcmQiOiJ0ZXN0NSJ9LCJpYXQiOjE3NDUxNDQ1MjAsImV4cCI6MTc0NTE0ODEyMH0.JJ73dqOUKd3Ski_9bwxNHGLvxyBYhKaYGDOMjx6-LgI'
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
