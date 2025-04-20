@@ -24,8 +24,9 @@ export class CategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-category')
-    async updateCategory(@Body() updatedCategoryDto: UpdateCategoryDto): Promise<Observable<CategoryI>> {
-        return this.categoryService.update(updatedCategoryDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateCategory(@UploadedFile() file: Express.Multer.File, @Body() updatedCategoryDto: UpdateCategoryDto): Promise<Observable<CategoryI>> {
+        return this.categoryService.update(file, updatedCategoryDto);
         // AppConstants.app.xyz
     }
 

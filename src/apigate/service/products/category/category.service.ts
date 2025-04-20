@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { CategoryI } from '../../../models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../models/dto/category.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
@@ -50,11 +50,30 @@ export class CategoryService {
         );
     }
 
-    async update(updatedCategoryDto: UpdateCategoryDto): Promise<Observable<any>> {
+    async update(file: Express.Multer.File, updatedCategoryDto: UpdateCategoryDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/categories/update-category', updatedCategoryDto, { headers: this.getHeaders(this.token) })
+        const formData = new FormData();
+        formData.append('Id', (updatedCategoryDto.Id as any).toString());
+        formData.append('ThumnailImage', updatedCategoryDto.ThumnailImage);
+        formData.append('Name', updatedCategoryDto.Name);
+        formData.append('Slug', updatedCategoryDto.Slug);
+        formData.append('Status', updatedCategoryDto.Status.toString());
+        if (file) {
+            const blob = new Blob([file.buffer], { type: file.mimetype });
+            formData.append('file', blob, file.originalname);
+        }
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/categories/update-category', formData, { 
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+         })
         .pipe(
-            map(response => (response as any).data)
+            map(response => (response as any).data),
+            catchError(error => {
+                console.error('Error updating category:', error);
+                return throwError(() => new Error('Failed to update category. Please try again later.'));
+            })
         );
     }
 
