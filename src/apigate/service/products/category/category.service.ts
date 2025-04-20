@@ -34,7 +34,7 @@ export class CategoryService {
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/categories/create-category', formData, {
             headers: {
                 'content-type': 'multipart/form-data',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGVzdDEzQHRlc3QuY29tIiwicGFzc3dvcmQiOiJ0ZXN0NSJ9LCJpYXQiOjE3NDUxNDQ1MjAsImV4cCI6MTc0NTE0ODEyMH0.JJ73dqOUKd3Ski_9bwxNHGLvxyBYhKaYGDOMjx6-LgI'
+                'Authorization': 'Bearer '+ this.token
             }
         })
         .pipe(
