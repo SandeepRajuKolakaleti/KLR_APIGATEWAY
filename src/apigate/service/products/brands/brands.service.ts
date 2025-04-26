@@ -22,9 +22,16 @@ export class BrandsService {
         return headersRequest;
     }
 
-    async create(createdBrandsDto: CreateBrandDto): Promise<Observable<BrandI>> {
+    async create(file: Express.Multer.File, createdBrandsDto: CreateBrandDto): Promise<Observable<BrandI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/create-brand', createdBrandsDto, { headers: this.getHeaders(this.token) })
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('ThumnailImage', createdBrandsDto.ThumnailImage);
+        formData.append('Name', createdBrandsDto.Name);
+        formData.append('Slug', createdBrandsDto.Slug);
+        formData.append('Status', createdBrandsDto.Status.toString());
+        formData.append('file', blob, file.originalname);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/create-brand', formData, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
@@ -38,9 +45,19 @@ export class BrandsService {
         );
     }
 
-    async update(updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {
+    async update(file: Express.Multer.File, updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/update-brand', updatedBrandDto, { headers: this.getHeaders(this.token) })
+        const formData = new FormData();
+        formData.append('Id', (updatedBrandDto.Id as any).toString());
+        formData.append('ThumnailImage', updatedBrandDto.ThumnailImage);
+        formData.append('Name', updatedBrandDto.Name);
+        formData.append('Slug', updatedBrandDto.Slug);
+        formData.append('Status', updatedBrandDto.Status.toString());
+        if (file) {
+            const blob = new Blob([file.buffer], { type: file.mimetype });
+            formData.append('file', blob, file.originalname);
+        }
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/update-brand', formData, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

@@ -22,9 +22,16 @@ export class ChildCategoryService {
         return headersRequest;
     }
 
-    async create(createdSubCategoryDto: CreateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
+    async create(file: Express.Multer.File, createdSubCategoryDto: CreateChildCategoryDto): Promise<Observable<ChildCategoryI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/create-category', createdSubCategoryDto, { headers: this.getHeaders(this.token) })
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('ThumnailImage', createdSubCategoryDto.ThumnailImage);
+        formData.append('Name', createdSubCategoryDto.Name);
+        formData.append('Slug', createdSubCategoryDto.Slug);
+        formData.append('Status', createdSubCategoryDto.Status.toString());
+        formData.append('file', blob, file.originalname);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/create-category', formData, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
@@ -38,9 +45,19 @@ export class ChildCategoryService {
         );
     }
 
-    async update(updatedChildCategoryDto: UpdateChildCategoryDto): Promise<Observable<any>> {
+    async update(file: Express.Multer.File, updatedChildCategoryDto: UpdateChildCategoryDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/update-child-category', updatedChildCategoryDto, { headers: this.getHeaders(this.token) })
+        const formData = new FormData();
+        formData.append('Id', (updatedChildCategoryDto.Id as any).toString());
+        formData.append('ThumnailImage', updatedChildCategoryDto.ThumnailImage);
+        formData.append('Name', updatedChildCategoryDto.Name);
+        formData.append('Slug', updatedChildCategoryDto.Slug);
+        formData.append('Status', updatedChildCategoryDto.Status.toString());
+        if (file) {
+            const blob = new Blob([file.buffer], { type: file.mimetype });
+            formData.append('file', blob, file.originalname);
+        }
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/update-child-category', formData, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
