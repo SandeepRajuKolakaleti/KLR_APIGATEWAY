@@ -10,8 +10,8 @@ export class CreateSubCategoryDto {
     @Type(() => String)
     ThumnailImage!: string;
     @IsString()
-    @Type(() => Number)
-    Category!: number;
+    @Type(() => String)
+    Category!: string;
     @IsString()
     @Type(() => String)
     Slug!: string;
@@ -22,5 +22,6 @@ export class CreateSubCategoryDto {
 
 export class UpdateSubCategoryDto extends CreateSubCategoryDto {
     @IsNumber()
+    @Type(() => Number)
     Id?: number;
 }

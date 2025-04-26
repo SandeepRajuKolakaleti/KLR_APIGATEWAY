@@ -31,7 +31,13 @@ export class SubCategoryService {
         formData.append('Slug', createdSubCategoryDto.Slug);
         formData.append('Status', createdSubCategoryDto.Status.toString());
         formData.append('file', blob, file.originalname);
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/create-subcategory', formData, { headers: this.getHeaders(this.token) })
+        formData.append('Category', createdSubCategoryDto.Category.toString());
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/create-subcategory', formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
@@ -39,7 +45,7 @@ export class SubCategoryService {
 
     async getAllSubCategories(): Promise<Observable<SubCategoryI[]>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
@@ -53,11 +59,17 @@ export class SubCategoryService {
         formData.append('Name', updatedSubCategoryDto.Name);
         formData.append('Slug', updatedSubCategoryDto.Slug);
         formData.append('Status', updatedSubCategoryDto.Status.toString());
+        formData.append('Category', updatedSubCategoryDto.Category.toString());
         if (file) {
             const blob = new Blob([file.buffer], { type: file.mimetype });
             formData.append('file', blob, file.originalname);
         }
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/update-subcategory', formData, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/update-subcategory', formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
@@ -65,7 +77,7 @@ export class SubCategoryService {
 
     async findOne(id: number): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
@@ -73,7 +85,7 @@ export class SubCategoryService {
 
     async delete(id: number) {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
+        return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

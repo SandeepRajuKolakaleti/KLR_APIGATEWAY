@@ -31,7 +31,12 @@ export class BrandsService {
         formData.append('Slug', createdBrandsDto.Slug);
         formData.append('Status', createdBrandsDto.Status.toString());
         formData.append('file', blob, file.originalname);
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/create-brand', formData, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/create-brand', formData, { 
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
@@ -57,7 +62,12 @@ export class BrandsService {
             const blob = new Blob([file.buffer], { type: file.mimetype });
             formData.append('file', blob, file.originalname);
         }
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/update-brand', formData, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/brands/update-brand', formData, { 
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+         })
         .pipe(
             map(response => (response as any).data)
         );

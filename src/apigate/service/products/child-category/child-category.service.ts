@@ -31,7 +31,14 @@ export class ChildCategoryService {
         formData.append('Slug', createdSubCategoryDto.Slug);
         formData.append('Status', createdSubCategoryDto.Status.toString());
         formData.append('file', blob, file.originalname);
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/create-category', formData, { headers: this.getHeaders(this.token) })
+        formData.append('Category', createdSubCategoryDto.Category.toString());
+        formData.append('SubCategory', createdSubCategoryDto.SubCategory.toString());
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/create-child-category', formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
@@ -53,11 +60,18 @@ export class ChildCategoryService {
         formData.append('Name', updatedChildCategoryDto.Name);
         formData.append('Slug', updatedChildCategoryDto.Slug);
         formData.append('Status', updatedChildCategoryDto.Status.toString());
+        formData.append('Category', updatedChildCategoryDto.Category.toString());
+        formData.append('SubCategory', updatedChildCategoryDto.SubCategory.toString());
         if (file) {
             const blob = new Blob([file.buffer], { type: file.mimetype });
             formData.append('file', blob, file.originalname);
         }
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/update-child-category', formData, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/update-child-category', formData, {
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        })
         .pipe(
             map(response => (response as any).data)
         );
