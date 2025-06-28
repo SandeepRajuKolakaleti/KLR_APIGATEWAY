@@ -23,6 +23,9 @@ export class CategoryService {
     }
 
     async create(file: Express.Multer.File, createdCategoryDto: CreateCategoryDto): Promise<Observable<CategoryI>> {
+        if (!file) {
+            throw new Error('File is required');
+        }
         this.token = await this.redisCacheService.get("localtoken");
         const blob = new Blob([file.buffer], { type: file.mimetype });
         const formData = new FormData();
@@ -53,7 +56,9 @@ export class CategoryService {
     async update(file: Express.Multer.File, updatedCategoryDto: UpdateCategoryDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
         const formData = new FormData();
-        formData.append('Id', (updatedCategoryDto.Id as any).toString());
+        if (updatedCategoryDto.Id) {
+            formData.append('Id', String(updatedCategoryDto.Id));
+        }
         formData.append('ThumnailImage', updatedCategoryDto.ThumnailImage);
         formData.append('Name', updatedCategoryDto.Name);
         formData.append('Slug', updatedCategoryDto.Slug);

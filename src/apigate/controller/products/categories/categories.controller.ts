@@ -11,7 +11,7 @@ export class CategoriesController {
     @UseGuards(JwtAuthGuard)
     @Post("create-category")
     @UseInterceptors(FileInterceptor('file'))
-    createCategory(@UploadedFile() file: Express.Multer.File, @Body() createdCategoryDto: CreateCategoryDto): Promise<Observable<CategoryI>> {
+    async createCategory(@UploadedFile() file: Express.Multer.File, @Body() createdCategoryDto: CreateCategoryDto): Promise<Observable<CategoryI>> {
         return this.categoryService.create(file, createdCategoryDto);
         // test app constants - AppConstants.app.xyz
     }
