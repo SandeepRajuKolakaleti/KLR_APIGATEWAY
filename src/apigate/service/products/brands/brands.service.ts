@@ -53,7 +53,9 @@ export class BrandsService {
     async update(file: Express.Multer.File, updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
         const formData = new FormData();
-        formData.append('Id', (updatedBrandDto.Id as any).toString());
+        if (updatedBrandDto.Id) {
+            formData.append('Id', String(updatedBrandDto.Id));
+        }
         formData.append('ThumnailImage', updatedBrandDto.ThumnailImage);
         formData.append('Name', updatedBrandDto.Name);
         formData.append('Slug', updatedBrandDto.Slug);
