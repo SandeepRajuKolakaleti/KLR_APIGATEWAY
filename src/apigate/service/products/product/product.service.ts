@@ -47,9 +47,9 @@ export class ProductService {
         );
     }
 
-    async updateproduct(updateedProductDto: UpdateProductDto): Promise<Observable<any>> {
+    async updateproduct(updatedProductDto: UpdateProductDto): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/update-product', updateedProductDto, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/update-product', updatedProductDto, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

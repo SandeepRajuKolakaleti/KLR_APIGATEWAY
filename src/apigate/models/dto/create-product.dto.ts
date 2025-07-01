@@ -1,5 +1,26 @@
-import { IsNumber, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsArray, IsBoolean, IsNumber, IsString, ValidateNested } from "class-validator";
 
+export class HighlightDto {
+  @IsBoolean()
+  NewArrival?: boolean;
+
+  @IsBoolean()
+  TopProduct?: boolean;
+
+  @IsBoolean()
+  BestProduct?: boolean;
+
+  @IsBoolean()
+  FeaturedProduct?: boolean;
+}
+export class SpecificationDto {
+  @IsString()
+  key?: string;
+
+  @IsString()
+  specification?: string;
+}
 export class CreateProductDto {
 
     @IsString()
@@ -30,16 +51,19 @@ export class CreateProductDto {
     ShortDescription!: string;
     @IsString()
     LongDescription!: string;
-
-    Highlight!: { [key: string]: boolean };
+    @ValidateNested()
+    @Type(() => HighlightDto)
+    Highlight!: HighlightDto;
     @IsString()
     Status!: string;
     @IsString()
     SEOTitle!: string;
     @IsString()
     SEODescription!: string;
-
-    Specifications!: {key: string; specification: string }[];
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => SpecificationDto)
+    Specifications!: SpecificationDto[];
     @IsString()
     Vendor!: string;
 }
