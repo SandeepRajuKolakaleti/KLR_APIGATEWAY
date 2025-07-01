@@ -1,20 +1,36 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Req } from '@nestjs/common';
 import { ProductService } from '../../../service/products/product/product.service';
 import { JwtAuthGuard } from '../../../../auth/guards/jwt-auth.guard';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { Observable } from 'rxjs';
 import { ProductI } from '../../../models/product.interface';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 
 @Controller('products')
 export class ProductsController {
 
     constructor(private productService: ProductService) { }
 
+    @Post('create-product')
     @UseGuards(JwtAuthGuard)
-    @Post("create-product")
-    createProduct(@Body() createdProductDto: CreateProductDto): Promise<Observable<ProductI>> {
-        return this.productService.createProducts(createdProductDto);
-        // test app constants - AppConstants.app.xyz
+    @UseInterceptors(FileInterceptor('file'))
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() createdProductDto: any,@Req() request: Request): Promise<Observable<ProductI>> {
+        // console.log(file, createdProductDto, request.body);
+        const parsedDto: CreateProductDto = {
+            ...createdProductDto,
+            Category: Number(createdProductDto.Category),
+            SubCategory: Number(createdProductDto.SubCategory),
+            ChildCategory: Number(createdProductDto.ChildCategory),
+            Brand: Number(createdProductDto.Brand),
+            Price: Number(createdProductDto.Price),
+            OfferPrice: Number(createdProductDto.OfferPrice),
+            StockQuantity: Number(createdProductDto.StockQuantity),
+            Weight: Number(createdProductDto.Weight),
+            Highlight: JSON.parse(createdProductDto.Highlight),
+            Specifications: JSON.parse(createdProductDto.Specifications),
+        };
+        return this.productService.createProducts(file, parsedDto);
     }
 
     @UseGuards(JwtAuthGuard)

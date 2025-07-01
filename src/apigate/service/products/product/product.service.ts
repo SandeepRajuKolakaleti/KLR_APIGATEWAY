@@ -5,7 +5,6 @@ import { map, Observable } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { ProductI } from '../../../models/product.interface';
 import { File } from 'buffer';
-
 @Injectable()
 export class ProductService {
     token!: string;
@@ -23,9 +22,28 @@ export class ProductService {
         return headersRequest;
     }
 
-    async createProducts(createProductDto: CreateProductDto): Promise<Observable<ProductI>> {
+    getFormDataHeaders(tokens: any): any {
+        const headersRequest = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${tokens}`,
+        };
+        return headersRequest;
+    }
+
+    async createProducts(file: Express.Multer.File, createProductDto: CreateProductDto): Promise<Observable<ProductI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/create-product', createProductDto, { headers: this.getHeaders(this.token) })
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('file', blob, file.originalname);
+        Object.entries(createProductDto).forEach(([key, value]) => {
+            if (key === 'Highlight' || key === 'Specifications') {
+                formData.append(key, JSON.stringify(value));
+            } else  {
+                formData.append(key, String(value));
+            }
+        });
+        console.log(formData);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/create-product', formData, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
