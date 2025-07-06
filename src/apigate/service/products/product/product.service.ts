@@ -65,9 +65,22 @@ export class ProductService {
         );
     }
 
-    async updateproduct(updatedProductDto: UpdateProductDto): Promise<Observable<any>> {
+    async updateproduct(file: Express.Multer.File, updatedProductDto: UpdateProductDto): Promise<Observable<ProductI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/update-product', updatedProductDto, { headers: this.getHeaders(this.token) })
+        const formData = new FormData();
+        if (file) {
+            const blob = new Blob([file.buffer], { type: file.mimetype });
+            formData.append('file', blob, file.originalname);
+        }
+        Object.entries(updatedProductDto).forEach(([key, value]) => {
+            if (key === 'Highlight' || key === 'Specifications') {
+                formData.append(key, JSON.stringify(value));
+            } else  {
+                formData.append(key, String(value));
+            }
+        });
+        console.log("formData :", formData);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/update-product', formData, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

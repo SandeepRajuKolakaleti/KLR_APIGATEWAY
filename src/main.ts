@@ -11,7 +11,7 @@ async function bootstrap() {
   const LISTEN_PORT = 9090;
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({
-    transform: true, // <-- important
+    transform: true,
     whitelist: true,
     forbidNonWhitelisted: true,
   }));

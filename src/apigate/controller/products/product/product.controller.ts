@@ -15,7 +15,7 @@ export class ProductsController {
     @Post('create-product')
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() createdProductDto: any,@Req() request: Request): Promise<Observable<ProductI>> {
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body() createdProductDto: CreateProductDto,@Req() request: Request): Promise<any> {
         // console.log(file, createdProductDto, request.body);
         const parsedDto: CreateProductDto = {
             ...createdProductDto,
@@ -27,8 +27,10 @@ export class ProductsController {
             OfferPrice: Number(createdProductDto.OfferPrice),
             StockQuantity: Number(createdProductDto.StockQuantity),
             Weight: Number(createdProductDto.Weight),
-            Highlight: JSON.parse(createdProductDto.Highlight),
-            Specifications: JSON.parse(createdProductDto.Specifications),
+            Highlight: typeof createdProductDto.Highlight === 'string' ? JSON.parse(createdProductDto.Highlight): createdProductDto.Highlight,
+            Specifications: typeof createdProductDto.Specifications === 'string'
+            ? JSON.parse(createdProductDto.Specifications)
+            : createdProductDto.Specifications,
         };
         return this.productService.createProducts(file, parsedDto);
     }
@@ -51,8 +53,10 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('update-product')
-    async updateProduct(@Body() updatedProductDto: UpdateProductDto): Promise<Observable<ProductI>> {
-        return this.productService.updateproduct(updatedProductDto);
+    @UseInterceptors(FileInterceptor('file'))
+    async updateProduct(@UploadedFile() file: Express.Multer.File, @Body() updatedProductDto: UpdateProductDto, @Req() request: Request): Promise<Observable<ProductI>> {
+        // console.log(file, updatedProductDto, request.body);
+        return this.productService.updateproduct(file, updatedProductDto);
         // AppConstants.app.xyz
     }
 
