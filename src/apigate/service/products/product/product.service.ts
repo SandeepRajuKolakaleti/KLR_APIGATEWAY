@@ -4,7 +4,6 @@ import { RedisCacheService } from '../../../../redis/redis.service';
 import { map, Observable } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { ProductI } from '../../../models/product.interface';
-import { File } from 'buffer';
 @Injectable()
 export class ProductService {
     token!: string;
@@ -32,7 +31,9 @@ export class ProductService {
 
     async createProducts(file: Express.Multer.File, createProductDto: CreateProductDto): Promise<Observable<ProductI>> {
         this.token = await this.redisCacheService.get("localtoken");
-        const blob = new Blob([file.buffer], { type: file.mimetype });
+        // convert Node Buffer to Uint8Array to satisfy BlobPart typing
+        const uint8Array = new Uint8Array(file.buffer);
+        const blob = new Blob([uint8Array], { type: file.mimetype });
         const formData = new FormData();
         formData.append('file', blob, file.originalname);
         Object.entries(createProductDto).forEach(([key, value]) => {
@@ -49,9 +50,9 @@ export class ProductService {
         );
     }
 
-    async readExcelFile(file: File): Promise<any> {
+    async readExcelFile(file: Express.Multer.File): Promise<any> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/upload/excel', file, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/upload/excel', file, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
@@ -66,10 +67,11 @@ export class ProductService {
     }
 
     async updateproduct(file: Express.Multer.File, updatedProductDto: UpdateProductDto): Promise<Observable<ProductI>> {
-        this.token = await this.redisCacheService.get("localtoken");
         const formData = new FormData();
         if (file) {
-            const blob = new Blob([file.buffer], { type: file.mimetype });
+            // convert Node Buffer to Uint8Array to satisfy BlobPart typing
+            const uint8Array = new Uint8Array(file.buffer);
+            const blob = new Blob([uint8Array], { type: file.mimetype });
             formData.append('file', blob, file.originalname);
         }
         Object.entries(updatedProductDto).forEach(([key, value]) => {

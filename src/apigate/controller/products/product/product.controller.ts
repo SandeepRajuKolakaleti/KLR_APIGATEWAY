@@ -37,7 +37,9 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Post('upload/excel')
-    async uploadExcel(@UploadedFile() file: any) {
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadExcel(@UploadedFile() file: Express.Multer.File) {
+        console.log(file);
         if (!file) {
             throw new Error('No file uploaded');
         }
