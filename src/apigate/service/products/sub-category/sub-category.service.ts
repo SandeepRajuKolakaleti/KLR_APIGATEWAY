@@ -83,6 +83,14 @@ export class SubCategoryService {
         );
     }
 
+    async findOneByCategory(Id: number): Promise<Observable<any>> {
+        this.token = await this.redisCacheService.get("localtoken");
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/category/'+ Id, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
     async delete(id: number) {
         this.token = await this.redisCacheService.get("localtoken");
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
