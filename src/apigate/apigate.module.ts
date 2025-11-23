@@ -16,15 +16,19 @@ import { CategoryService } from './service/products/category/category.service';
 import { SubCategoryService } from './service/products/sub-category/sub-category.service';
 import { ChildCategoryService } from './service/products/child-category/child-category.service';
 import { BrandsService } from './service/products/brands/brands.service';
+import { VendorController } from './controller/vendors/vendor.controller';
+import { VendorService } from './service/vendor/vendor.service';
+import { VendorEntity } from './models/vendor.entity';
 
 
 @Module({
-  imports: [HttpModule,
+  imports: [
+    HttpModule,
     TypeOrmModule.forFeature([]),
     AuthModule,
     RedisCacheModule,
   ],
-  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService],
-  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController]
+  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService, VendorService],
+  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, VendorController]
 })
 export class ApigateModule {}

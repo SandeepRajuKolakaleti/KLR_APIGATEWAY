@@ -27,10 +27,8 @@ export class ProductsController {
             OfferPrice: Number(createdProductDto.OfferPrice),
             StockQuantity: Number(createdProductDto.StockQuantity),
             Weight: Number(createdProductDto.Weight),
-            Highlight: typeof createdProductDto.Highlight === 'string' ? JSON.parse(createdProductDto.Highlight): createdProductDto.Highlight,
-            Specifications: typeof createdProductDto.Specifications === 'string'
-            ? JSON.parse(createdProductDto.Specifications)
-            : createdProductDto.Specifications,
+            Highlight: createdProductDto.Highlight,
+            Specifications: createdProductDto.Specifications,
         };
         return this.productService.createProducts(file, parsedDto);
     }
