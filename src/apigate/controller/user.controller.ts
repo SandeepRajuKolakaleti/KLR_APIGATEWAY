@@ -1,19 +1,28 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CreateApigateDto } from '../models/dto/CreateApigate.dto';
+import { CreateApigateDto, UpdateUserDto } from '../models/dto/CreateApigate.dto';
 import { LoginApigateDto } from '../models/dto/LoginApigate.dto';
 import { ApigateI } from '../models/apigate.interface';
+// import { CreateUserDto } from '../models/dto/CreateUser.dto';
+// import { LoginUserDto } from '../models/dto/LoginUser.dto';
+// import { UserI } from '../models/user.interface';
 import { UserService } from '../service/user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService) { }
 
     @Post("register")
-    createUser(@Body() createdUserDto: CreateApigateDto): Observable<ApigateI> {
-        return this.userService.createUser(createdUserDto);
-        // test app constants - AppConstants.app.xyz
+    @UseInterceptors(FileInterceptor('file'))
+    async create(@UploadedFile() file: Express.Multer.File, @Body() createUserDto: CreateApigateDto): Promise<Observable<ApigateI>> {
+      console.log(file);
+      if (file) {
+        createUserDto.image = file.originalname;
+      }
+      return this.userService.createUser(file, createUserDto);
+      // AppConstants.app.xyz
     }
 
     @UseGuards(JwtAuthGuard)
@@ -44,6 +53,17 @@ export class UserController {
     @Get('profile/:id')
     async profile(@Param('id') id: string): Promise<any> {
         return this.userService.findUserById(id);
+    }
+
+    @Post('update')
+    @UseInterceptors(FileInterceptor('file'))
+    async update(@UploadedFile() file: Express.Multer.File, @Body() updateUserDto: UpdateUserDto): Promise<Observable<ApigateI>> {
+      console.log(file);
+      if (file) {
+        updateUserDto.image = file.originalname;
+      }
+      return this.userService.update(file, updateUserDto);
+      // AppConstants.app.xyz
     }
 
 }

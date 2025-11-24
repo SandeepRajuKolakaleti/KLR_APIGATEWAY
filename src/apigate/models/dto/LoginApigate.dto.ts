@@ -1,17 +1,42 @@
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class LoginApigateDto {
-
     @IsEmail()
     email!: string;
 
     @IsNotEmpty()
     password!: string;
 
-    phonenumber?:Number;
+    @IsOptional()
+    @IsNumber()
+    id?: number;
 
-    tokenStr?:string;
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    permissionId?: number;
 
+    @IsOptional()
+    @IsString()
+    @Type(() => String)
+    gwtToken?: string;
 
+    @IsOptional()
+    @IsString()
+    permissionName?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Type(() => Number)
+    phonenumber?: number;
+
+    @IsOptional()
+    @IsString()
+    tokenStr?: string;
+
+    @IsOptional()
+    @IsString()
+    name?: string;
 
 }

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { map } from 'rxjs/operators';
 import { AppConstants } from 'src/app.constants';
-import { CreateApigateDto } from '../models/dto/CreateApigate.dto';
+import { CreateApigateDto, UpdateUserDto } from '../models/dto/CreateApigate.dto';
 import { LoginApigateDto } from '../models/dto/LoginApigate.dto';
 import { ApigateService } from '../service/apigate.service';
 import { AuthService } from './../../auth/services/auth/auth.service';
@@ -29,7 +29,6 @@ export class UserService {
 
     getHeaders(tokens: any): any {
         const headersRequest = {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${tokens}`,
         };
         return headersRequest;
@@ -43,12 +42,53 @@ export class UserService {
             );
     }
 
-    createUser(createdUserDto: CreateApigateDto) {
+    async createUser(file: Express.Multer.File, createdUserDto: CreateApigateDto) {
         console.log(JSON.stringify(createdUserDto), 'service data');
-        return this.http.post(process.env.USER_SERVER_URL+ 'api/users/register', createdUserDto)
-            .pipe(
-                map(response => (response as any).data)
-            );
+        this.token = await this.redisCacheService.get("localtoken");
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('image', createdUserDto.image || '');
+        formData.append('name', createdUserDto.name);
+        formData.append('email', createdUserDto.email);
+        formData.append('password', createdUserDto.password);
+        formData.append('phonenumber', createdUserDto.phonenumber ? String(createdUserDto.phonenumber) : '');
+        formData.append('userRole', createdUserDto.userRole);
+        formData.append('permissionId', createdUserDto.permissionId ? String(createdUserDto.permissionId) : '');
+        formData.append('permissionName', createdUserDto.permissionName ? String(createdUserDto.permissionName) : '');
+        formData.append('address', createdUserDto.address ? String(createdUserDto.address) : '');
+        formData.append('birthday', createdUserDto.birthday ? String(createdUserDto.birthday) : '');
+        formData.append('file', blob, file.originalname);
+        return this.http.post(process.env.USER_SERVER_URL+ 'api/users/register', formData, { 
+            headers: {
+                'content-type': 'multipart/form-data',
+                'Authorization': 'Bearer '+ this.token
+            }
+        }).pipe(
+            map(response => (response as any).data)
+        );
+    }
+
+    async update(file: Express.Multer.File, updateUserDto: UpdateUserDto) {
+        console.log(JSON.stringify(updateUserDto), 'service data');
+        this.token = await this.redisCacheService.get("localtoken");
+        const blob = new Blob([file.buffer], { type: file.mimetype });
+        const formData = new FormData();
+        formData.append('image', updateUserDto.image || '');
+        formData.append('name', updateUserDto.name);
+        formData.append('email', updateUserDto.email);
+        formData.append('password', updateUserDto.password);
+        formData.append('phonenumber', updateUserDto.phonenumber ? String(updateUserDto.phonenumber) : '');
+        formData.append('userRole', updateUserDto.userRole);
+        formData.append('permissionId', updateUserDto.permissionId ? String(updateUserDto.permissionId) : '');
+        formData.append('permissionName', updateUserDto.permissionName ? String(updateUserDto.permissionName) : '');
+        formData.append('Id', updateUserDto.Id ? String(updateUserDto.Id) : '');
+        formData.append('address', updateUserDto.address ? String(updateUserDto.address) : '');
+        formData.append('birthday', updateUserDto.birthday ? String(updateUserDto.birthday) : '');
+        formData.append('file', blob, file.originalname);
+        return this.http.post(process.env.USER_SERVER_URL+ `api/users/update`, formData, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
     }
 
     loginUser(loginUserDto: LoginApigateDto) {
