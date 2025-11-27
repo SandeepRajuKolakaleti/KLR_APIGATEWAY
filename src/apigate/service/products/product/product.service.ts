@@ -30,7 +30,7 @@ export class ProductService {
     }
 
     async createProducts(file: Express.Multer.File, createProductDto: CreateProductDto): Promise<Observable<ProductI>> {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         // convert Node Buffer to Uint8Array to satisfy BlobPart typing
         const uint8Array = new Uint8Array(file.buffer);
         const blob = new Blob([uint8Array], { type: file.mimetype });
@@ -51,7 +51,7 @@ export class ProductService {
     }
 
     async readExcelFile(file: Express.Multer.File): Promise<any> {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/upload/excel', file, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
@@ -59,7 +59,7 @@ export class ProductService {
     }
 
     async getAllProducts(): Promise<Observable<ProductI[]>> {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
@@ -89,7 +89,7 @@ export class ProductService {
     }
 
     async findOne(id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/product/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
@@ -97,7 +97,7 @@ export class ProductService {
     }
 
     async deleteProduct(id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/products/product/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
@@ -105,7 +105,7 @@ export class ProductService {
     }
 
     async getImageUrlToBase64(payload: any) {
-        this.token = await this.redisCacheService.get("localtoken");
+        this.token = await this.redisCacheService.get("userApiToken");
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/uploadImgToBase64', payload, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
