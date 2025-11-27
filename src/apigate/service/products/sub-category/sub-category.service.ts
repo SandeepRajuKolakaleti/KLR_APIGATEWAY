@@ -22,8 +22,8 @@ export class SubCategoryService {
         return headersRequest;
     }
 
-    async create(file: Express.Multer.File, createdSubCategoryDto: CreateSubCategoryDto): Promise<Observable<SubCategoryI>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async create(file: Express.Multer.File, createdSubCategoryDto: CreateSubCategoryDto, user: any): Promise<Observable<SubCategoryI>> {
+        await this.getToken(user);
         const blob = new Blob([file.buffer], { type: file.mimetype });
         const formData = new FormData();
         formData.append('ThumnailImage', createdSubCategoryDto.ThumnailImage);
@@ -43,16 +43,16 @@ export class SubCategoryService {
         );
     }
 
-    async getAllSubCategories(): Promise<Observable<SubCategoryI[]>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async getAllSubCategories(user: any): Promise<Observable<SubCategoryI[]>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
 }
 
-    async update(file: Express.Multer.File, updatedSubCategoryDto: UpdateSubCategoryDto): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async update(file: Express.Multer.File, updatedSubCategoryDto: UpdateSubCategoryDto, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         const formData = new FormData();
         formData.append('Id', (updatedSubCategoryDto.Id as any).toString());
         formData.append('ThumnailImage', updatedSubCategoryDto.ThumnailImage);
@@ -75,27 +75,32 @@ export class SubCategoryService {
         );
     }
 
-    async findOne(id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async findOne(id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async findOneByCategory(Id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async findOneByCategory(Id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/category/'+ Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async delete(id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
+    async delete(id: number, user: any) {
+        await this.getToken(user);
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/sub-categories/subCategory/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getToken(user: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
+        this.token = newLoginToken;
     }
 }

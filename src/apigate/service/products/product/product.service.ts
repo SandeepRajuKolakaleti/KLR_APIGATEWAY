@@ -29,8 +29,8 @@ export class ProductService {
         return headersRequest;
     }
 
-    async createProducts(file: Express.Multer.File, createProductDto: CreateProductDto): Promise<Observable<ProductI>> {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async createProducts(file: Express.Multer.File, createProductDto: CreateProductDto, user: any): Promise<Observable<ProductI>> {
+        await this.getToken(user);
         // convert Node Buffer to Uint8Array to satisfy BlobPart typing
         const uint8Array = new Uint8Array(file.buffer);
         const blob = new Blob([uint8Array], { type: file.mimetype });
@@ -50,23 +50,24 @@ export class ProductService {
         );
     }
 
-    async readExcelFile(file: Express.Multer.File): Promise<any> {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async readExcelFile(file: Express.Multer.File, user: any): Promise<any> {
+        await this.getToken(user);
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/upload/excel', file, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async getAllProducts(): Promise<Observable<ProductI[]>> {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async getAllProducts(user: any): Promise<Observable<ProductI[]>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async updateproduct(file: Express.Multer.File, updatedProductDto: UpdateProductDto): Promise<Observable<ProductI>> {
+    async updateproduct(file: Express.Multer.File, updatedProductDto: UpdateProductDto, user: any): Promise<Observable<ProductI>> {
+        await this.getToken(user);
         const formData = new FormData();
         if (file) {
             // convert Node Buffer to Uint8Array to satisfy BlobPart typing
@@ -88,28 +89,33 @@ export class ProductService {
         );
     }
 
-    async findOne(id: number) {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async findOne(id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/product/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async deleteProduct(id: number) {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async deleteProduct(id: number, user: any) {
+        await this.getToken(user);
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/products/product/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async getImageUrlToBase64(payload: any) {
-        this.token = await this.redisCacheService.get("userApiToken");
+    async getImageUrlToBase64(payload: any, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/uploadImgToBase64', payload, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getToken(user: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
+        this.token = newLoginToken;
     }
 
 }

@@ -22,8 +22,8 @@ export class BrandsService {
         return headersRequest;
     }
 
-    async create(file: Express.Multer.File, createdBrandsDto: CreateBrandDto): Promise<Observable<BrandI>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async create(file: Express.Multer.File, createdBrandsDto: CreateBrandDto, user: any): Promise<Observable<BrandI>> {
+        await this.getToken(user);
         const blob = new Blob([file.buffer], { type: file.mimetype });
         const formData = new FormData();
         formData.append('ThumnailImage', createdBrandsDto.ThumnailImage);
@@ -42,16 +42,16 @@ export class BrandsService {
         );
     }
 
-    async getAllBrands(): Promise<Observable<BrandI[]>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async getAllBrands(user: any): Promise<Observable<BrandI[]>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/brands/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async update(file: Express.Multer.File, updatedBrandDto: UpdateBrandDto): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async update(file: Express.Multer.File, updatedBrandDto: UpdateBrandDto, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         const formData = new FormData();
         if (updatedBrandDto.Id) {
             formData.append('Id', String(updatedBrandDto.Id));
@@ -75,19 +75,24 @@ export class BrandsService {
         );
     }
 
-    async findOne(id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async findOne(id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/brands/brand/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async delete(id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
+    async delete(id: number, user: any) {
+        await this.getToken(user);
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/brands/brand/'+ id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getToken(user: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
+        this.token = newLoginToken;
     }
 }

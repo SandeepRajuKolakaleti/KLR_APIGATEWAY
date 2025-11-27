@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateVendorDto, UpdateVendorDto } from '../../models/dto/create-vendor.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { map, Observable} from 'rxjs';
 import { VendorI } from '../../models/vendor.interface';
-import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { AppConstants } from 'src/app.constants';
-import { VendorEntity } from '../../models/vendor.entity';
 import { HttpService } from '@nestjs/axios';
 import { RedisCacheService } from 'src/redis/redis.service';
 
@@ -31,16 +26,16 @@ export class VendorService {
         }));
     }
 
-    async readExcelFile(file: Express.Multer.File): Promise<any> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async readExcelFile(file: Express.Multer.File, user: any): Promise<any> {
+        await this.getToken(user);
         return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/products/upload/excel', file, { headers: this.getFormDataHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async createVendor(file: Express.Multer.File, createVendorDto: CreateVendorDto): Promise<Observable<VendorI>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async createVendor(file: Express.Multer.File, createVendorDto: CreateVendorDto, user: any): Promise<Observable<VendorI>> {
+        await this.getToken(user);
         // convert Node Buffer to Uint8Array to satisfy BlobPart typing
         const uint8Array = new Uint8Array(file.buffer);
         const blob = new Blob([uint8Array], { type: file.mimetype });
@@ -60,8 +55,8 @@ export class VendorService {
         );
     }
 
-    async updateVendor(file: Express.Multer.File, updatedVendorDto: UpdateVendorDto): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async updateVendor(file: Express.Multer.File, updatedVendorDto: UpdateVendorDto, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         const formData = new FormData();
         if (file) {
             // convert Node Buffer to Uint8Array to satisfy BlobPart typing
@@ -83,36 +78,41 @@ export class VendorService {
         );
     }
 
-    async getAllVendors(): Promise<Observable<VendorI[]>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async getAllVendors(user: any): Promise<Observable<VendorI[]>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/vendors/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async getProductsByVendor(Id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async getProductsByVendor(Id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/vendors/productsByVendor/'+Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async findOne(Id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
+    async findOne(Id: number, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/vendors/vendor/'+ Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async deleteVendor(Id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
+    async deleteVendor(Id: number, user: any) {
+        await this.getToken(user);
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/vendors/vendor/'+ Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getToken(user: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
+        this.token = newLoginToken;
     }
 
     getHeaders(tokens: any): any {

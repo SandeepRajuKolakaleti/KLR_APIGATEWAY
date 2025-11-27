@@ -148,7 +148,7 @@ export class UserService {
                 await this.redisCacheService.set("email", email);
                 await this.redisCacheService.set("localtoken", this.localToken);
                 await this.redisCacheService.set("phoneNo", loginUserDto.phonenumber);
-                await this.redisCacheService.set("userApiToken", this.userApiToken);
+                await this.redisCacheService.set("userApiToken"+parsedResponse.id, this.userApiToken);
                 await this.redisCacheService.set("userPermission", this.userPermission);
                 await this.redisCacheService.set("id", parsedResponse.id);
 
