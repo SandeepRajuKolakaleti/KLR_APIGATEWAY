@@ -64,11 +64,8 @@ export class VendorService {
             const blob = new Blob([uint8Array], { type: file.mimetype });
             formData.append('file', blob, file.originalname);
         }
-        updatedVendorDto.PhoneNumber = Number(updatedVendorDto.PhoneNumber);
+        updatedVendorDto.phonenumber = Number(updatedVendorDto.phonenumber);
         Object.entries(updatedVendorDto).forEach(([key, value]) => {
-            if (key === 'PhoneNumber')
-                formData.append(key, value);
-            else
             formData.append(key, String(value));
         });
         console.log("formData :", formData);

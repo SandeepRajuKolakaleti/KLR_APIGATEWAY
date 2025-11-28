@@ -18,7 +18,6 @@ import { ChildCategoryService } from './service/products/child-category/child-ca
 import { BrandsService } from './service/products/brands/brands.service';
 import { VendorController } from './controller/vendors/vendor.controller';
 import { VendorService } from './service/vendor/vendor.service';
-import { VendorEntity } from './models/vendor.entity';
 
 
 @Module({
