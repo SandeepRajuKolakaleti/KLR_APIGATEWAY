@@ -27,9 +27,9 @@ export class LoginApigateDto {
     permissionName?: string;
 
     @IsOptional()
-    @IsNumber()
-    @Type(() => Number)
-    phonenumber?: number;
+    @IsString()
+    @Type(() => String)
+    phonenumber?: string;
 
     @IsOptional()
     @IsString()

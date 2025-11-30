@@ -57,6 +57,8 @@ export class UserService {
         formData.append('permissionName', createdUserDto.permissionName ? String(createdUserDto.permissionName) : '');
         formData.append('address', createdUserDto.address ? String(createdUserDto.address) : '');
         formData.append('birthday', createdUserDto.birthday ? String(createdUserDto.birthday) : '');
+        formData.append('revenue', createdUserDto.revenue ? String(createdUserDto.revenue) : '');
+        formData.append('totalSales', createdUserDto.totalSales ? String(createdUserDto.totalSales) : '');
         formData.append('file', blob, file.originalname);
         return this.http.post(process.env.USER_SERVER_URL+ 'api/users/register', formData, { 
             headers: {
@@ -84,6 +86,8 @@ export class UserService {
         formData.append('Id', updateUserDto.Id ? String(updateUserDto.Id) : '');
         formData.append('address', updateUserDto.address ? String(updateUserDto.address) : '');
         formData.append('birthday', updateUserDto.birthday ? String(updateUserDto.birthday) : '');
+        formData.append('revenue', updateUserDto.revenue ? String(updateUserDto.revenue) : '');
+        formData.append('totalSales', updateUserDto.totalSales ? String(updateUserDto.totalSales) : '');
         formData.append('file', blob, file.originalname);
         return this.http.post(process.env.USER_SERVER_URL+ `api/users/update`, formData, { headers: this.getHeaders(this.token) })
         .pipe(

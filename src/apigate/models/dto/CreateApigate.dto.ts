@@ -22,6 +22,16 @@ export class CreateApigateDto extends LoginApigateDto {
 	@IsString()
     @IsOptional()
     birthday?:string;
+
+    @IsOptional()
+    @IsString()
+    @Type(() => String)
+    totalSales?: string;
+
+    @IsOptional()
+    @IsString()
+    @Type(() => String)
+    revenue?: string;
     
 }
 

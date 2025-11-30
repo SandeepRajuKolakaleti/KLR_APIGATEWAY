@@ -24,7 +24,7 @@ export class VendorController {
             name: createdVendorDto.name,
             image: createdVendorDto.image,
             email: createdVendorDto.email,
-            phonenumber: Number(createdVendorDto.phonenumber),
+            phonenumber: createdVendorDto.phonenumber,
             address: createdVendorDto.address,
             password: createdVendorDto.password,
             userRole: createdVendorDto.userRole,
