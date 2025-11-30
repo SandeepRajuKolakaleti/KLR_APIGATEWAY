@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class ChildCategoryEntity {
@@ -23,5 +23,13 @@ export class ChildCategoryEntity {
 
     @Column()
     Status!: string; 
+
+    // ✅ Auto-created timestamp
+    @CreateDateColumn({ type: "timestamp" })
+    createdAt!: Date;
+
+    // ✅ Auto-updated timestamp
+    @UpdateDateColumn({ type: "timestamp" })
+    updatedAt!: Date;
 
 }
