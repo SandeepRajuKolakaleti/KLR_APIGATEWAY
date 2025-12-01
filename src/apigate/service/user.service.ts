@@ -6,7 +6,7 @@ import { LoginApigateDto } from '../models/dto/LoginApigate.dto';
 import { ApigateService } from '../service/apigate.service';
 import { AuthService } from './../../auth/services/auth/auth.service';
 import { RedisCacheService } from './../../redis/redis.service';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 
 
@@ -184,6 +184,19 @@ export class UserService {
                 return userData;
             })
         );
+    }
+
+    async getImageUrlToBase64(payload: any, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
+        return this.http.post(process.env.USER_SERVER_URL+ 'api/users/uploadImgToBase64', payload, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
+    async getToken(user: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
+        this.token = newLoginToken;
     }
 
 }

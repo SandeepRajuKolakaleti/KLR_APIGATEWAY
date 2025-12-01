@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateApigateDto, UpdateUserDto } from '../models/dto/CreateApigate.dto';
@@ -9,8 +9,10 @@ import { ApigateI } from '../models/apigate.interface';
 // import { UserI } from '../models/user.interface';
 import { UserService } from '../service/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { SignedInUserInterceptor } from '../service/signed-in-user.interceptor.service';
 
 @Controller('users')
+@UseInterceptors(SignedInUserInterceptor)
 export class UserController {
     constructor(private userService: UserService) { }
 
@@ -64,6 +66,16 @@ export class UserController {
       }
       return this.userService.update(file, updateUserDto);
       // AppConstants.app.xyz
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('uploadImgToBase64')
+    async base64(@Body() img: any, @Req() request: any): Promise<any> {
+      console.log(img);
+      if(img === undefined || img === '') {
+        return Error('No image provided');
+      }
+      return this.userService.getImageUrlToBase64(img, request.user);
     }
 
 }

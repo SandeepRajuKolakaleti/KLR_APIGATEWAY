@@ -39,9 +39,12 @@ export class VendorController {
 
     @UseGuards(JwtAuthGuard)
     @Post('uploadImgToBase64')
-    async base64(@Body() img: any) {
-        console.log(img);
-        return this.vendorService.getImageUrlToBase64(img.url);
+    async base64(@Body() img: any, @Req() request: any): Promise<any> {
+      console.log(img);
+      if(img === undefined || img === '') {
+        return Error('No image provided');
+      }
+      return this.vendorService.getImageUrlToBase64(img, request.user);
     }
 
     @UseGuards(JwtAuthGuard)

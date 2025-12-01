@@ -16,14 +16,12 @@ export class VendorService {
     ) {
     }
 
-    async getImageUrlToBase64(s3Key: any) {
-        return this.http.post(process.env.PRODUCT_SERVER_URL+'api/vendors/uploadImgToBase64', { url: s3Key })
+    async getImageUrlToBase64(payload: any, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/vendors/uploadImgToBase64', payload, { headers: this.getHeaders(this.token) })
         .pipe(
-        map(response => { 
-            const base64 = Buffer.from(response.data, 'binary').toString('base64');
-            const contentType = response.headers['content-type'];
-            return `data:${contentType};base64,${base64}`;
-        }));
+            map(response => (response as any).data)
+        );
     }
 
     async readExcelFile(file: Express.Multer.File, user: any): Promise<any> {
