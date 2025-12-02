@@ -5,6 +5,7 @@ import { VendorI } from '../../models/vendor.interface';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { RedisCacheService } from 'src/redis/redis.service';
+import { Pagination } from 'src/apigate/models/pagination.interface';
 
 @Injectable()
 export class VendorService {
@@ -73,9 +74,9 @@ export class VendorService {
         );
     }
 
-    async getAllVendors(user: any): Promise<Observable<VendorI[]>> {
+    async getAllVendors(user: any, pagination: Pagination): Promise<Observable<VendorI[]>> {
         await this.getToken(user);
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/vendors/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/vendors/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

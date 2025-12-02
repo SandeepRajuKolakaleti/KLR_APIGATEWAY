@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors, UploadedFile, Param, Delete, ParseFilePipe, FileTypeValidator, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer, diskStorage } from 'multer';
@@ -77,8 +77,13 @@ export class VendorController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllVendors(@Req() request: Request): Promise<Observable<VendorI[]>> {
-        return this.vendorService.getAllVendors(request.user);
+    async getAllVendors(@Req() request: Request,
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,): Promise<Observable<VendorI[]>> {
+        return this.vendorService.getAllVendors(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

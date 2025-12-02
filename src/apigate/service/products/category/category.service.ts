@@ -4,6 +4,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { CategoryI } from '../../../models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../models/dto/category.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
+import { Pagination } from 'src/apigate/models/pagination.interface';
 
 @Injectable()
 export class CategoryService {
@@ -45,9 +46,9 @@ export class CategoryService {
         );
     }
 
-    async getAllCategories(user: any): Promise<Observable<CategoryI[]>> {
+    async getAllCategories(user: any, pagination: Pagination): Promise<Observable<CategoryI[]>> {
         await this.getToken(user);
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/categories/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/categories/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

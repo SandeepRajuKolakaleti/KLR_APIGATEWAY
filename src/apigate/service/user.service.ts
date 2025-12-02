@@ -8,6 +8,7 @@ import { AuthService } from './../../auth/services/auth/auth.service';
 import { RedisCacheService } from './../../redis/redis.service';
 import { lastValueFrom, Observable } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import { Pagination } from '../models/pagination.interface';
 
 
 
@@ -34,9 +35,9 @@ export class UserService {
         return headersRequest;
     }
 
-    async getUsers() {
+    async getUsers(pagination: Pagination): Promise<Observable<any>> {
         this.token = await this.redisCacheService.get("localtoken");
-        return this.http.get(process.env.USER_SERVER_URL+ 'api/users', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.USER_SERVER_URL+ 'api/users?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
             .pipe(
                 map(response => (response as any).data)
             );

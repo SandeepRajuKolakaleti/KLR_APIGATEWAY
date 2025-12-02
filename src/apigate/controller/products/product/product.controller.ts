@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductService } from '../../../service/products/product/product.service';
 import { JwtAuthGuard } from '../../../../auth/guards/jwt-auth.guard';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
@@ -50,9 +50,14 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllProducts(@Req() request: Request) {
+    async getAllProducts(@Req() request: Request, 
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
         console.log(request.user);
-        return this.productService.getAllProducts(request.user);
+        return this.productService.getAllProducts(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

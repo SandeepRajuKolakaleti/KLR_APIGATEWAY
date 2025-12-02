@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { CreateSubCategoryDto, UpdateSubCategoryDto } from '../../../models/dto/sub-category.dto';
 import { SubCategoryI } from '../../../models/sub-category.interface';
@@ -23,9 +23,14 @@ export class SubCategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllSubCategories(@Req() request: Request) {
+    async getAllSubCategories(@Req() request: Request,
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
         console.log(request.user);
-        return this.subCategoryService.getAllSubCategories(request.user);
+        return this.subCategoryService.getAllSubCategories(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

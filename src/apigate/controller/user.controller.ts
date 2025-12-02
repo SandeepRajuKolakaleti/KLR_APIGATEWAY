@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UploadedFile, UseInterceptors, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards, UploadedFile, UseInterceptors, Req, Query, ParseIntPipe } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateApigateDto, UpdateUserDto } from '../models/dto/CreateApigate.dto';
@@ -29,8 +29,13 @@ export class UserController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllUsers() {
-        return this.userService.getUsers();
+    async getAllUsers(@Req() request: Request,
+      @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+      @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
+      return this.userService.getUsers({
+        offset: Number(offset),
+        limit: Number(limit)
+      });
     }
 
     @Post('login')

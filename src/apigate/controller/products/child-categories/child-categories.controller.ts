@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { ChildCategoryI } from '../../../models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../models/dto/child-category.dto';
@@ -25,9 +25,14 @@ export class ChildCategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllChildCategories(@Req() request: Request) {
+    async getAllChildCategories(@Req() request: Request,
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
         console.log(request.user);
-        return this.childCategoryService.getAllChildCategories(request.user);
+        return this.childCategoryService.getAllChildCategories(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { BrandI } from '../../../models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../models/dto/brand.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
+import { Pagination } from 'src/apigate/models/pagination.interface';
 
 @Injectable()
 export class BrandsService {
@@ -42,9 +43,9 @@ export class BrandsService {
         );
     }
 
-    async getAllBrands(user: any): Promise<Observable<BrandI[]>> {
+    async getAllBrands(user: any, pagination: Pagination): Promise<Observable<BrandI[]>> {
         await this.getToken(user);
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/brands/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/brands/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

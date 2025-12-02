@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ChildCategoryI } from '../../../models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../models/dto/child-category.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
+import { Pagination } from 'src/apigate/models/pagination.interface';
 
 @Injectable()
 export class ChildCategoryService {
@@ -44,9 +45,9 @@ export class ChildCategoryService {
         );
     }
 
-    async getAllChildCategories(user: any): Promise<Observable<ChildCategoryI[]>> {
+    async getAllChildCategories(user: any, pagination: Pagination): Promise<Observable<ChildCategoryI[]>> {
         await this.getToken(user);
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/child-categories/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

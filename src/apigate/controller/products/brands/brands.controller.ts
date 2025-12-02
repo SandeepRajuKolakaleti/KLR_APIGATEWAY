@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { BrandI } from '../../../models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../models/dto/brand.dto';
@@ -23,9 +23,14 @@ export class BrandsController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllBrands(@Req() request: Request) {
+    async getAllBrands(@Req() request: Request,
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
         console.log(request.user);
-        return this.brandsService.getAllBrands(request.user);
+        return this.brandsService.getAllBrands(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)

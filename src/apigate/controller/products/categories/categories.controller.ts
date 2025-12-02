@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { CategoryI } from '../../../models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../models/dto/category.dto';
@@ -22,9 +22,14 @@ export class CategoriesController {
 
     @UseGuards(JwtAuthGuard)
     @Get("getAll")
-    async getAllCategories(@Req() request: Request) {
+    async getAllCategories(@Req() request: Request,
+        @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+        @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,) {
         console.log(request.user);
-        return this.categoryService.getAllCategories(request.user);
+        return this.categoryService.getAllCategories(request.user, {
+            offset: Number(offset),
+            limit: Number(limit)
+        });
     }
 
     @UseGuards(JwtAuthGuard)
