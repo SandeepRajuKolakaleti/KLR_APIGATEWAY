@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { BrandI } from '../../../models/brand.interface';
 import { CreateBrandDto, UpdateBrandDto } from '../../../models/dto/brand.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { Pagination } from '../../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class BrandsService {

@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ChildCategoryI } from '../../../models/child-category.interface';
 import { CreateChildCategoryDto, UpdateChildCategoryDto } from '../../../models/dto/child-category.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { Pagination } from '../../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class ChildCategoryService {

@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { AuthService } from 'src/auth/services/auth/auth.service';
+import { AuthService } from '../../auth/services/auth/auth.service';
 import { Repository } from 'typeorm';
 import { CreateApigateDto } from '../models/dto/CreateApigate.dto';
 import { LoginApigateDto } from '../models/dto/LoginApigate.dto';

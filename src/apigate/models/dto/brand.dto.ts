@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsBoolean, IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class CreateBrandDto {
 
@@ -12,12 +12,12 @@ export class CreateBrandDto {
     @IsString()
     @Type(() => String)
     Slug!: string;
-    @IsString()
-    @Type(() => String)
-    Status!: string;
+    @IsNumber()
+    @Type(() => Number)
+    Status!: number;
 }
 
 export class UpdateBrandDto extends CreateBrandDto {
     @IsString()
-    Id?: String;
+    Id?: string;
 }

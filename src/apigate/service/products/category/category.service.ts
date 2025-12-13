@@ -4,7 +4,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { CategoryI } from '../../../models/category.interface';
 import { CreateCategoryDto, UpdateCategoryDto } from '../../../models/dto/category.dto';
 import { RedisCacheService } from '../../../../redis/redis.service';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { Pagination } from './../../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class CategoryService {

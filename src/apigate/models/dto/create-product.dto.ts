@@ -83,8 +83,9 @@ export class CreateProductDto {
   @IsString()
   Highlight!: HighlightDto | string;
 
-  @IsString()
-  Status!: string;
+  @IsNumber()
+  @Type(() => Number)
+  Status!: number;
 
   @IsString()
   SEOTitle!: string;

@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { Observable, firstValueFrom, of } from 'rxjs';
 import { catchError, map, retry, timeout } from 'rxjs/operators';
-import { UserService } from 'src/apigate/service/user.service';
-import { LoginApigateDto } from 'src/apigate/models/dto/LoginApigate.dto';
+import { UserService } from '../../apigate/service/user.service';
+import { LoginApigateDto } from '../../apigate/models/dto/LoginApigate.dto';
 
 @Injectable()
 export class SignedInUserInterceptor implements NestInterceptor {

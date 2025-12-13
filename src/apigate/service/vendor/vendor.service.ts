@@ -4,8 +4,8 @@ import { map, Observable} from 'rxjs';
 import { VendorI } from '../../models/vendor.interface';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { RedisCacheService } from 'src/redis/redis.service';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { RedisCacheService } from '../../../redis/redis.service';
+import { Pagination } from '../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class VendorService {

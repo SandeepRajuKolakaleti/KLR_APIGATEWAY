@@ -4,7 +4,7 @@ import { RedisCacheService } from '../../../../redis/redis.service';
 import { map, Observable } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { ProductI } from '../../../models/product.interface';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { Pagination } from '../../../../apigate/models/pagination.interface';
 @Injectable()
 export class ProductService {
     token!: string;

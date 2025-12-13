@@ -1,3 +1,5 @@
+import { HighlightDto, SpecificationDto } from "./dto/create-product.dto";
+
 export interface ProductI {
     Id?: number;
     ThumnailImage: string;
@@ -14,10 +16,10 @@ export interface ProductI {
     Weight: number;
     ShortDescription: string;
     LongDescription: string;
-    Highlight: { [key: string]: boolean };
-    Status: string; 
+    Highlight: HighlightDto;
+    Status: number;
     SEOTitle: string;
     SEODescription: string;
-    Specifications: {key: string; specification: string }[];
+    Specifications: SpecificationDto[];
     Vendor: string;
 }

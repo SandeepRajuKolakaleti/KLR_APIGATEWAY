@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { CreateSubCategoryDto, UpdateSubCategoryDto } from '../../../models/dto/sub-category.dto';
 import { SubCategoryI } from '../../../models/sub-category.interface';
 import { RedisCacheService } from '../../../../redis/redis.service';
-import { Pagination } from 'src/apigate/models/pagination.interface';
+import { Pagination } from '../../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class SubCategoryService {

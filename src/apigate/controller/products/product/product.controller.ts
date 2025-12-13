@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { ProductI } from '../../../models/product.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
-import { UserService } from 'src/apigate/service/user.service';
+import { UserService } from '../../../../apigate/service/user.service';
 import { SignedInUserInterceptor } from '../../../service/signed-in-user.interceptor.service';
 
 @Controller('products')

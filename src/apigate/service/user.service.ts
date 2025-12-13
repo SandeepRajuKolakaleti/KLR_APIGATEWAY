@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { map } from 'rxjs/operators';
-import { AppConstants } from 'src/app.constants';
+import { AppConstants } from '../../app.constants';
 import { CreateApigateDto, UpdateUserDto } from '../models/dto/CreateApigate.dto';
 import { LoginApigateDto } from '../models/dto/LoginApigate.dto';
 import { ApigateService } from '../service/apigate.service';
