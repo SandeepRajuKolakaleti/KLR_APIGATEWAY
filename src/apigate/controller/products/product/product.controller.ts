@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { UserService } from '../../../../apigate/service/user.service';
 import { SignedInUserInterceptor } from '../../../service/signed-in-user.interceptor.service';
+import { PaginatedResult } from '../../../../apigate/models/pagination.interface';
 
 @Controller('products')
 @UseInterceptors(SignedInUserInterceptor)
@@ -58,6 +59,27 @@ export class ProductsController {
             offset: Number(offset),
             limit: Number(limit)
         });
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('search')
+    async searchByCategory(
+    @Req() request: Request,
+    @Query('category', ParseIntPipe) category: number,
+    @Query('subCategory', ParseIntPipe) subCategory: number,
+    @Query('offset', new ParseIntPipe({ optional: true })) offset = 0,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
+    ): Promise<Observable<PaginatedResult<ProductI>>> {
+        const user = request.user;
+        return this.productService.searchByCategory(
+            user,
+            category,
+            subCategory,
+            {
+            offset: Number(offset),
+            limit: Number(limit),
+            }
+        );
     }
 
     @UseGuards(JwtAuthGuard)

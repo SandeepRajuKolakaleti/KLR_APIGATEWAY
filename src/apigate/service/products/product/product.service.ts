@@ -4,7 +4,7 @@ import { RedisCacheService } from '../../../../redis/redis.service';
 import { map, Observable } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { ProductI } from '../../../models/product.interface';
-import { Pagination } from '../../../../apigate/models/pagination.interface';
+import { PaginatedResult, Pagination } from '../../../../apigate/models/pagination.interface';
 @Injectable()
 export class ProductService {
     token!: string;
@@ -62,6 +62,14 @@ export class ProductService {
     async getAllProducts(user: any, pagination: Pagination): Promise<Observable<ProductI[]>> {
         await this.getToken(user);
         return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
+    async searchByCategory(user: any, categoryId: number, subCategoryId: number, pagination: Pagination): Promise<Observable<PaginatedResult<ProductI>>> {
+        await this.getToken(user);
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/search?category='+ categoryId +'&subCategory='+ subCategoryId +'&offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
