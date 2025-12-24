@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, Us
 import { ProductService } from '../../../service/products/product/product.service';
 import { JwtAuthGuard } from '../../../../auth/guards/jwt-auth.guard';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ProductI } from '../../../models/product.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
@@ -64,20 +64,22 @@ export class ProductsController {
     @UseGuards(JwtAuthGuard)
     @Get('search')
     async searchByCategory(
-    @Req() request: Request,
-    @Query('category', ParseIntPipe) category: number,
-    @Query('subCategory', ParseIntPipe) subCategory: number,
-    @Query('offset', new ParseIntPipe({ optional: true })) offset = 0,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
+        @Req() request: Request,
+        @Query('category', new ParseIntPipe({ optional: true })) category?: number,
+        @Query('subCategory', new ParseIntPipe({ optional: true })) subCategory?: number,
+        @Query('brand', new ParseIntPipe({ optional: true })) brand?: number,
+        @Query('offset', new ParseIntPipe({ optional: true })) offset = 0,
+        @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
     ): Promise<Observable<PaginatedResult<ProductI>>> {
-        const user = request.user;
-        return this.productService.searchByCategory(
+       const user = request.user;
+        return this.productService.search(
             user,
             category,
             subCategory,
+            brand,
             {
-            offset: Number(offset),
-            limit: Number(limit),
+                offset: Number(offset),
+                limit: Number(limit),
             }
         );
     }

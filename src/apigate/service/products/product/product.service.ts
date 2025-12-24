@@ -67,9 +67,9 @@ export class ProductService {
         );
     }
 
-    async searchByCategory(user: any, categoryId: number, subCategoryId: number, pagination: Pagination): Promise<Observable<PaginatedResult<ProductI>>> {
+    async search(user: any, categoryId: number| undefined, subCategoryId: number| undefined, brandId: number | undefined, pagination: Pagination): Promise<Observable<PaginatedResult<ProductI>>> {
         await this.getToken(user);
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/search?category='+ categoryId +'&subCategory='+ subCategoryId +'&offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/search?category='+ categoryId +'&subCategory='+ subCategoryId +'&brand='+ brandId +'&offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

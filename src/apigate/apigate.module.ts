@@ -18,6 +18,10 @@ import { ChildCategoryService } from './service/products/child-category/child-ca
 import { BrandsService } from './service/products/brands/brands.service';
 import { VendorController } from './controller/vendors/vendor.controller';
 import { VendorService } from './service/vendor/vendor.service';
+import { AddToCartController } from './controller/products/add-to-cart/add-to-cart.controller';
+import { WishListController } from './controller/products/wish-list/wish-list.controller';
+import { AddToCartService } from './service/products/add-to-cart/add-to-cart.service';
+import { WishListService } from './service/products/wish-list/wish-list.service';
 
 
 @Module({
@@ -27,7 +31,7 @@ import { VendorService } from './service/vendor/vendor.service';
     AuthModule,
     RedisCacheModule,
   ],
-  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService, VendorService],
-  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, VendorController]
+  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService, VendorService, AddToCartService, WishListService],
+  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, VendorController, AddToCartController, WishListController]
 })
 export class ApigateModule {}
