@@ -106,6 +106,14 @@ export class ProductService {
         );
     }
 
+    async getProductsByIds(ids: number[], user: any): Promise<Observable<any>> {
+        await this.getToken(user);
+        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/product/get-by-ids?ids='+ ids, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
     async deleteProduct(id: number, user: any) {
         await this.getToken(user);
         return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/products/product/'+ id, { headers: this.getHeaders(this.token) })

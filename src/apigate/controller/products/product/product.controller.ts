@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Req, Query, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, Req, Query, ParseIntPipe, ParseArrayPipe } from '@nestjs/common';
 import { ProductService } from '../../../service/products/product/product.service';
 import { JwtAuthGuard } from '../../../../auth/guards/jwt-auth.guard';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
@@ -94,11 +94,21 @@ export class ProductsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('product/get-by-ids')
+    async getProductsByIds(@Query(
+        'ids'
+    ) ids: number[], @Req() request: Request): Promise<any> {
+        console.log(ids);
+        return this.productService.getProductsByIds(ids, request.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get('product/:id')
     async info(@Param('id') id: number, @Req() request: Request): Promise<any> {
         console.log(request.user);
         return this.productService.findOne(id, request.user);
     }
+
 
     @UseGuards(JwtAuthGuard)
     @Delete('product/:id')
