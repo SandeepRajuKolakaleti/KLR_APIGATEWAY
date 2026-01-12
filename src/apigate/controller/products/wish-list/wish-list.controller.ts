@@ -1,4 +1,3 @@
-// wishlist.controller.ts
 import {
   Controller,
   Post,

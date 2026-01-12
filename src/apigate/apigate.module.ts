@@ -22,6 +22,8 @@ import { AddToCartController } from './controller/products/add-to-cart/add-to-ca
 import { WishListController } from './controller/products/wish-list/wish-list.controller';
 import { AddToCartService } from './service/products/add-to-cart/add-to-cart.service';
 import { WishListService } from './service/products/wish-list/wish-list.service';
+import { PaymentController } from './payment/payment.controller';
+import { PaymentService } from './service/payment/payment.service';
 
 
 @Module({
@@ -31,7 +33,7 @@ import { WishListService } from './service/products/wish-list/wish-list.service'
     AuthModule,
     RedisCacheModule,
   ],
-  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService, VendorService, AddToCartService, WishListService],
-  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, VendorController, AddToCartController, WishListController]
+  providers: [ApigateService,UserService, ProductService, CategoryService,SubCategoryService, ChildCategoryService, BrandsService, VendorService, AddToCartService, WishListService, PaymentService],
+  controllers: [UserController, ProductsController, CategoriesController, SubCategoriesController, ChildCategoriesController, BrandsController, VendorController, AddToCartController, WishListController, PaymentController]
 })
 export class ApigateModule {}
