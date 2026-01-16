@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { RedisCacheService } from '../../../redis/redis.service';
 import { map } from 'rxjs';
+import { PaymentGateway } from '../../../apigate/models/payment-gateway.enum';
 
 @Injectable()
 export class PaymentService {
@@ -27,17 +28,17 @@ export class PaymentService {
         return headersRequest;
     }
 
-    async createOrder(amount: number, userId: string): Promise<any> {
+    async createOrder(gateway: PaymentGateway, amount: number, userId: string): Promise<any> {
         await this.getToken(userId);
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/payment/create-order', { amount: amount }, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/payment/create-order', { gateway: gateway, amount: amount }, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async verifyPayment(payload: any, userId: string): Promise<any> {
+    async verifyPayment(gateway: PaymentGateway, payload: any, userId: string): Promise<any> {
         await this.getToken(userId);
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/payment/verify', payload, { headers: this.getHeaders(this.token) })
+        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/payment/verify', { gateway: gateway, ...payload }, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );

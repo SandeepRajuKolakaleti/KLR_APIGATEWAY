@@ -21,43 +21,48 @@ export class OrderService {
         return headersRequest;
     }
 
-    async create(createdOrderDto: CreateOrderDto) {
-        this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/orders/create-order', createdOrderDto, { headers: this.getHeaders(this.token) })
+    async create(createdOrderDto: CreateOrderDto, userId: string) {
+        await this.getToken(userId);
+        return this.http.post(process.env.ORDER_SERVER_URL+ 'api/orders/create-order', createdOrderDto, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async getAll() {
-        this.token = await this.redisCacheService.get("localtoken");
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/orders/getAll', { headers: this.getHeaders(this.token) })
+    async getAll(userId: string) {
+        await this.getToken(userId);
+        return this.http.get(process.env.ORDER_SERVER_URL+ 'api/orders/getAll', { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async update(updatedOrderDto: UpdateOrderDto): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
-        return this.http.post(process.env.PRODUCT_SERVER_URL+ 'api/orders/update-order', updatedOrderDto, { headers: this.getHeaders(this.token) })
+    async update(updatedOrderDto: UpdateOrderDto, userId: string): Promise<Observable<any>> {
+        await this.getToken(userId);
+        return this.http.post(process.env.ORDER_SERVER_URL+ 'api/orders/update-order', updatedOrderDto, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async findOne(Id: number): Promise<Observable<any>> {
-        this.token = await this.redisCacheService.get("localtoken");
-        return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })
+    async findOne(Id: number, userId: string): Promise<Observable<any>> {
+        await this.getToken(userId);
+        return this.http.get(process.env.ORDER_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
     }
 
-    async delete(Id: number) {
-        this.token = await this.redisCacheService.get("localtoken");
-        return this.http.delete(process.env.PRODUCT_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })
+    async delete(Id: number, userId: string) {
+        await this.getToken(userId);
+        return this.http.delete(process.env.ORDER_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getToken(id: any) {
+        let newLoginToken = await this.redisCacheService.get("userApiToken"+id);
+        this.token = newLoginToken;
     }
 }

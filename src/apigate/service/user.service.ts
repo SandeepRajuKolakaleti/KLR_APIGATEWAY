@@ -22,7 +22,6 @@ export class UserService {
     userPermission:any;
     constructor(
         private http: HttpService,
-        private apigateService: ApigateService,
         private authService: AuthService,
         private redisCacheService: RedisCacheService
     ) {
