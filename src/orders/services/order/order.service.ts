@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { CreateOrderDto, UpdateOrderDto } from '../../../orders/models/dto/order.dto';
 import { RedisCacheService } from '../../../redis/redis.service';
+import { Pagination } from '../../../apigate/models/pagination.interface';
 
 @Injectable()
 export class OrderService {
@@ -29,9 +30,9 @@ export class OrderService {
         );
     }
 
-    async getAll(userId: string) {
+    async getAll(userId: string, pagination: Pagination) {
         await this.getToken(userId);
-        return this.http.get(process.env.ORDER_SERVER_URL+ 'api/orders/getAll', { headers: this.getHeaders(this.token) })
+        return this.http.get(process.env.ORDER_SERVER_URL+ 'api/orders/getAll?offset='+ pagination.offset + '&limit='+ pagination.limit, { headers: this.getHeaders(this.token) })
         .pipe(
             map(response => (response as any).data)
         );
