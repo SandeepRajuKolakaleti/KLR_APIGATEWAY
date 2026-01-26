@@ -4,6 +4,7 @@ export interface OrderI {
     OrderDate: Date;
     TotalAmount: number;
     Status: string;
+    isActive:number;
     PaymentMethod: string;
     IsPaid: boolean;
     PaidAt: Date;
@@ -12,6 +13,7 @@ export interface OrderI {
     Notes: string;
     Items: OrderItemEntity[];
     UserId: number;
+    userName?: string;
 }
 
 export interface OrderItemEntity {
@@ -19,6 +21,7 @@ export interface OrderItemEntity {
     ProductId: number;
     Quantity: number;
     UnitPrice: number;
+    VendorId?: string;
 }
 
 // export interface CustomerEntity {

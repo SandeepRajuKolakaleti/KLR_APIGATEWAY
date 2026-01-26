@@ -26,7 +26,7 @@ export class OrderEntity {
     @PrimaryGeneratedColumn()
     Id!: number;
 
-    @Column()
+    @Column({ unique: true })
     OrderNumber!: string;
 
     @Column({ type: 'timestamp' })
@@ -41,10 +41,10 @@ export class OrderEntity {
         default: 1,  // active by default
     })
     isActive!: number;
-    
+
     @Column({ type: 'enum', enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' })
     Status!: string;
-    
+
     @Column({ type: 'varchar', length: 100, nullable: true })
     TransactionId?: string;
 
@@ -65,7 +65,7 @@ export class OrderEntity {
 
     @Column({ type: 'text', nullable: true })
     Notes!: string;
-        
+
     @Column({ type: 'text', nullable: true })
     PhoneNumber?: string;
 
@@ -77,6 +77,13 @@ export class OrderEntity {
 
     @Column()
     UserId!: number;
+
+    @Column()
+    UserName!: string;
+
+    @Column({ nullable: true })
+    DeliveryManId?: number;
+    
 }
 
 @Entity()
@@ -93,6 +100,9 @@ export class OrderItemEntity {
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     UnitPrice!: number;
+
+    @Column({ type: 'text', nullable: true })
+    VendorId!: string;
 
     @ManyToOne(() => OrderEntity, order => order.Items, { onDelete: 'CASCADE' })
     Order!: OrderEntity;

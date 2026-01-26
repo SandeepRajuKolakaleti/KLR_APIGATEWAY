@@ -194,6 +194,21 @@ export class UserService {
         );
     }
 
+    async getDeliveryBoys(pagination: Pagination): Promise<Observable<any>> {
+        this.token = await this.redisCacheService.get("localtoken");
+        let url = 'api/users/deliveryBoys';
+        if(pagination.offset) {
+            url += `?offset=${pagination.offset}`;
+        }
+        if(pagination.limit) {
+            url += (url.includes('?') ? '&' : '?') + `limit=${pagination.limit}`;
+        }
+        return this.http.get(process.env.USER_SERVER_URL+ url, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
     async getToken(user: any) {
         let newLoginToken = await this.redisCacheService.get("userApiToken"+user.id);
         this.token = newLoginToken;

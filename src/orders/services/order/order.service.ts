@@ -54,6 +54,20 @@ export class OrderService {
         );
     }
 
+    async getOrdersByVendorId(vendorId: string, offset = 0, limit = 10, userId: string): Promise<Observable<any>> {
+        await this.getToken(userId);
+        if(offset !== undefined && limit !== undefined) {
+            return this.http.get(process.env.ORDER_SERVER_URL+ `api/orders/vendor/${vendorId}?offset=${offset}&limit=${limit}`, { headers: this.getHeaders(this.token) })
+            .pipe(
+                map(response => (response as any).data)
+            );
+        }
+        return this.http.get(process.env.ORDER_SERVER_URL+ `api/orders/vendor/${vendorId}`, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
     async delete(Id: number, userId: string) {
         await this.getToken(userId);
         return this.http.delete(process.env.ORDER_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })

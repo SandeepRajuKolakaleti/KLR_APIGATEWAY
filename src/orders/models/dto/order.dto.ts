@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEmail, IsNumber, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsEmail, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateOrderDto {
 
@@ -42,12 +42,19 @@ export class CreateOrderDto {
     Items!: OrderItemDto[];
     @IsNumber()
     UserId!: number;
+    @IsString()
+    UserName?: string;
+    
+    @IsOptional()
+    @IsNumber()
+    DeliveryManId?: number;
 
 }
 
 export class UpdateOrderDto extends CreateOrderDto {
     @IsNumber()
     Id?: number;
+
     @IsString()
     OrderNumber!: string;
 }
@@ -57,6 +64,7 @@ export class OrderItemDto {
     ProductId!: number;
     Quantity!: number;
     UnitPrice!: number;
+    VendorId?: string;
 }
 
 // export class CustomerDto {

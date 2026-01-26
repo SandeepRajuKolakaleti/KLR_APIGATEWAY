@@ -83,4 +83,15 @@ export class UserController {
       return this.userService.getImageUrlToBase64(img, request.user);
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Get('deliveryBoys')
+    async deliveryBoy(@Req() request: Request, 
+      @Query("offset", new ParseIntPipe({ optional: true })) offset = 0,
+      @Query("limit", new ParseIntPipe({ optional: true })) limit = 10,): Promise<Observable<any>> {
+      return this.userService.getDeliveryBoys({
+        offset: Number(offset),
+        limit: Number(limit)
+      });
+    }
+
 }

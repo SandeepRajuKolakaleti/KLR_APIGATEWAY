@@ -44,6 +44,24 @@ export class OrderController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('vendor/:vendorId')
+    getVendorOrders(
+        @Req() req: Request,
+        @Param('vendorId') vendorId: string,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number
+    ) {
+        offset = offset ? Number(offset) : undefined;
+        limit = limit ? Number(limit) : undefined;
+        return this.orderService.getOrdersByVendorId(
+            vendorId,
+            offset,
+            limit,
+            (req.user as any).id
+        );
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Delete('order/:id')
     async deleteOrder(@Req() req: Request,@Param('id') id: number): Promise<any> {
         return this.orderService.delete(id, (req.user as any).id);
