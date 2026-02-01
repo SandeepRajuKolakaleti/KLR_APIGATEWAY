@@ -61,6 +61,23 @@ export class OrderController {
         );
     }
 
+    @Get('delivery-boy/:deliveryBoyId')
+    getDeliveryManOrders(
+        @Req() req: Request,
+        @Param('deliveryBoyId') deliveryBoyId: string,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number,
+    ) {
+        offset = offset ? Number(offset) : undefined;
+        limit = limit ? Number(limit) : undefined;
+        return this.orderService.getOrdersByDeliveryBoyId(
+            deliveryBoyId,
+            offset,
+            limit,
+            (req.user as any).id
+        );
+    }
+
     @UseGuards(JwtAuthGuard)
     @Delete('order/:id')
     async deleteOrder(@Req() req: Request,@Param('id') id: number): Promise<any> {

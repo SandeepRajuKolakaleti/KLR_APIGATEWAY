@@ -47,7 +47,7 @@ export class CreateOrderDto {
     
     @IsOptional()
     @IsNumber()
-    DeliveryManId?: number;
+    DeliveryBoyId?: number;
 
 }
 
