@@ -8,6 +8,12 @@ export class AppConstants {
             expiryTime: 3600,
             type: 'JWT' 
         },
+        highlight: {
+            BestProduct: 'BestProduct',
+            TopProduct: 'TopProduct',
+            NewArrival: 'NewArrival',
+            FeaturedProduct: 'FeaturedProduct'
+        }
     };
 
 }

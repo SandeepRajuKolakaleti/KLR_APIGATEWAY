@@ -1,10 +1,11 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { RedisCacheService } from '../../../../redis/redis.service';
-import { map, Observable } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { CreateProductDto, UpdateProductDto } from '../../../models/dto/create-product.dto';
 import { ProductI } from '../../../models/product.interface';
 import { PaginatedResult, Pagination } from '../../../../apigate/models/pagination.interface';
+import { AppConstants } from 'src/app.constants';
 @Injectable()
 export class ProductService {
     token!: string;
@@ -112,6 +113,32 @@ export class ProductService {
         .pipe(
             map(response => (response as any).data)
         );
+    }
+
+    async getProductsByHighlight(highlight: string, user: any): Promise<Observable<any>> {
+        await this.getToken(user);
+        if(highlight === AppConstants.app.highlight.BestProduct) {
+            return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/best-products', { headers: this.getHeaders(this.token) })
+            .pipe(
+                map(response => (response as any).data)
+            );
+        } else if(highlight === AppConstants.app.highlight.TopProduct) {
+            return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/top-products', { headers: this.getHeaders(this.token) })
+            .pipe(
+                map(response => (response as any).data)
+            );
+        } else if(highlight === AppConstants.app.highlight.NewArrival) {
+            return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/new-arrival', { headers: this.getHeaders(this.token) })
+            .pipe(
+                map(response => (response as any).data)
+            );
+        } else if(highlight === AppConstants.app.highlight.FeaturedProduct) {
+            return this.http.get(process.env.PRODUCT_SERVER_URL+ 'api/products/featured-products', { headers: this.getHeaders(this.token) })
+            .pipe(
+                map(response => (response as any).data)
+            );
+        }
+        return of(null);
     }
 
     async deleteProduct(id: number, user: any) {

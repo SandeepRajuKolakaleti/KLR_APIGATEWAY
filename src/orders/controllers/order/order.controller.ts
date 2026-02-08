@@ -78,6 +78,11 @@ export class OrderController {
         );
     }
 
+    @Get('top-recent-products')
+    async getTopRecentProducts( @Req() req: Request,): Promise<Observable<any>> {
+        return this.orderService.getProductsByTopRecent((req.user as any).id);
+    }
+
     @UseGuards(JwtAuthGuard)
     @Delete('order/:id')
     async deleteOrder(@Req() req: Request,@Param('id') id: number): Promise<any> {

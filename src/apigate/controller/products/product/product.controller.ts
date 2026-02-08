@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { UserService } from '../../../../apigate/service/user.service';
 import { SignedInUserInterceptor } from '../../../service/signed-in-user.interceptor.service';
 import { PaginatedResult } from '../../../../apigate/models/pagination.interface';
+import { AppConstants } from '../../../../app.constants';
 
 @Controller('products')
 @UseInterceptors(SignedInUserInterceptor)
@@ -107,6 +108,30 @@ export class ProductsController {
     async info(@Param('id') id: number, @Req() request: Request): Promise<any> {
         console.log(request.user);
         return this.productService.findOne(id, request.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('best-products')
+    async getBestProducts(@Req() request: Request): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.BestProduct, request.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('top-products')
+    async getTopProducts(@Req() request: Request): Promise<any> {
+        return this.productService.getProductsByHighlight(AppConstants.app.highlight.TopProduct, request.user);
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Get('new-arrival')
+    async NewArrival(@Req() request: Request): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.NewArrival, request.user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('featured-products')
+    async FeaturedProduct(@Req() request: Request): Promise<any> {
+      return this.productService.getProductsByHighlight(AppConstants.app.highlight.FeaturedProduct, request.user);
     }
 
 

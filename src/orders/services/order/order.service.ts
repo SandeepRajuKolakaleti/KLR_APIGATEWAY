@@ -82,6 +82,14 @@ export class OrderService {
         );
     }
 
+    async getProductsByTopRecent(userId: string): Promise<Observable<any>> {
+        await this.getToken(userId);
+        return this.http.get(process.env.ORDER_SERVER_URL+ `api/orders/top-recent-products`, { headers: this.getHeaders(this.token) })
+        .pipe(
+            map(response => (response as any).data)
+        );
+    }
+
     async delete(Id: number, userId: string) {
         await this.getToken(userId);
         return this.http.delete(process.env.ORDER_SERVER_URL+ 'api/orders/order/'+ Id, { headers: this.getHeaders(this.token) })
